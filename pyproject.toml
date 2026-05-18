@@ -1,0 +1,17 @@
+[project]
+name = "deepdue"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+dependencies = [
+    "httpx",
+    "python-dotenv", 
+    "pytest"
+]
+
+[tool.setuptools.packages.find]
+where = ["src", "."]
+include = ["deepdue*"]
+
+[project.scripts]
+dev = "deepdue.app:run"
