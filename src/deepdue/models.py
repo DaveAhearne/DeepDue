@@ -2,6 +2,46 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from deepdue import enums
 
+class CompanyPSCDateOfBirth(BaseModel):
+    month: int | None = None
+    year: int | None = None
+
+class CompanyPSCAddress(BaseModel):
+    address_line_1: str | None = None
+    address_line_2: str | None = None
+    care_of: str | None = None
+    country: str | None = None
+    locality: str | None = None
+    po_box: str | None = None
+    postal_code: str | None = None
+    premises: str | None = None
+    region: str | None = None
+
+class CompanyPSCIdentification(BaseModel):
+    country_registered: str | None = None
+    legal_authority: str | None = None
+    legal_form: str | None = None
+    place_registered: str | None = None
+    registration_number: str | None = None
+
+class CompanyPSC(BaseModel):
+    name: str | None = None
+    kind: str | None = None
+    natures_of_control: list[str] | None = None
+    notified_on: datetime | None = None
+    ceased: bool | None = None
+    ceased_on: datetime | None = None
+    date_of_birth: CompanyPSCDateOfBirth | None = None
+    nationality: str | None = None
+    identification: CompanyPSCIdentification | None = None
+    address: CompanyPSCAddress | None = None
+
+class CompanyPSCs(BaseModel):
+    active_count: int | None = None
+    resigned_count: int | None = None
+    total_results: int | None = None
+    items: list[CompanyPSC] | None = None
+
 class CompanyOfficerDateOfBirth(BaseModel):
     month: int | None = None
     year: int | None = None
