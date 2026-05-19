@@ -7,7 +7,8 @@ dependencies = [
     "httpx",
     "python-dotenv", 
     "pytest",
-    "pydantic"
+    "pydantic",
+    "langgraph"
 ]
 
 [tool.setuptools.packages.find]
