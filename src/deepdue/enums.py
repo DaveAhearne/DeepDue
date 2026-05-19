@@ -1,5 +1,22 @@
 from enum import Enum
 
+class CompanyFilingCategory(str, Enum):
+    ACCOUNTS = "accounts"
+    ADDRESS = "address"
+    ANNUAL_RETURN = "annual-return"
+    CAPITAL = "capital"
+    CHANGE_OF_NAME = "change-of-name"
+    INCORPORATION = "incorporation"
+    LIQUIDATION = "liquidation"
+    MISCELLANEOUS = "miscellaneous"
+    MORTGAGE = "mortgage"
+    OFFICERS = "officers"
+    RESOLUTION = "resolution"
+    GAZETTE = "gazette"
+    DISSOLUTION = "dissolution"
+    PERSONS_WITH_SIGNIFICANT_CONTROL = "persons-with-significant-control"
+    CONFIRMATION_STATEMENT = "confirmation-statement"
+
 class CompanyOfficerRoleType(str, Enum):
     CIC_MANAGER = "cic-manager"
     CORPORATE_DIRECTOR = "corporate-director"

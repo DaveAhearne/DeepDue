@@ -9,7 +9,7 @@ async def main():
     api_key = os.environ["CH_API_KEY"]
     client = CompaniesHouseClient(api_key)
 
-    company = await client.GetCompanyPSCs("11287732")
+    company = await client.GetCompanyFilingHistory("11287732")
     
     print(company)
 

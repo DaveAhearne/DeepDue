@@ -19,3 +19,7 @@ class CompaniesHouseClient:
     async def GetCompanyPSCs(self, company_number: str) -> models.CompanyPSCs:
         res = await self.client.get(f"/company/{company_number}/persons-with-significant-control")
         return models.CompanyPSCs.model_validate(res.json())
+    
+    async def GetCompanyFilingHistory(self, company_number: str) -> models.CompanyFilingHistory:
+        res = await self.client.get(f"/company/{company_number}/filing-history")
+        return models.CompanyFilingHistory.model_validate(res.json())

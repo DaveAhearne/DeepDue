@@ -2,6 +2,18 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from deepdue import enums
 
+class CompanyFiling(BaseModel):
+    date: datetime | None = None
+    category: enums.CompanyFilingCategory | None = None
+    description: str | None = None
+    type: str | None = None
+    subcategory: str | None = None
+
+class CompanyFilingHistory(BaseModel):
+    total_count: int | None = None
+    filing_history_status: str | None = None
+    items: list[CompanyFiling] | None = None
+
 class CompanyPSCDateOfBirth(BaseModel):
     month: int | None = None
     year: int | None = None
