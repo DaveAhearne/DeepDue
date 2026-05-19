@@ -2,7 +2,11 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from deepdue import enums
 
-class CompanyProfileRegisteredOfficeAddress(BaseModel):
+class DateOfBirth(BaseModel):
+    month: int | None = None
+    year: int | None = None
+    
+class Address(BaseModel):
     address_line_1: str | None = None
     address_line_2: str | None = None
     care_of: str | None = None
@@ -13,6 +17,20 @@ class CompanyProfileRegisteredOfficeAddress(BaseModel):
     premises: str | None = None
     region: str | None = None
 
+class OfficerSearchLinks(BaseModel):
+    self_: str | None = Field(None, alias="self")
+
+class OfficerSearchResult(BaseModel):
+    officer_name: str | None = Field(None, alias="title")
+    appointment_count: int | None = None
+    date_of_birth: DateOfBirth | None = None
+    links: OfficerSearchLinks | None = None
+    address: Address | None = None
+
+class OfficerSearchResults(BaseModel):
+    total_results: int | None = None
+    items: list[OfficerSearchResult] | None = None
+
 class CompanySearchResult(BaseModel):
     company_number:str | None
     company_name:str | None = Field(None, alias="title")
@@ -20,7 +38,7 @@ class CompanySearchResult(BaseModel):
     type:enums.CompanyProfileType | None = None
     date_of_creation:datetime | None = None
     date_of_cessation:datetime | None = None
-    address:CompanyProfileRegisteredOfficeAddress | None = None
+    address:Address | None = None
 
 class CompanySearchResults(BaseModel):
     total_results: int | None = None
@@ -38,9 +56,6 @@ class CompanyFilingHistory(BaseModel):
     filing_history_status: str | None = None
     items: list[CompanyFiling] | None = None
 
-class CompanyPSCDateOfBirth(BaseModel):
-    month: int | None = None
-    year: int | None = None
 
 class CompanyPSCAddress(BaseModel):
     address_line_1: str | None = None
@@ -67,7 +82,7 @@ class CompanyPSC(BaseModel):
     notified_on: datetime | None = None
     ceased: bool | None = None
     ceased_on: datetime | None = None
-    date_of_birth: CompanyPSCDateOfBirth | None = None
+    date_of_birth: DateOfBirth | None = None
     nationality: str | None = None
     identification: CompanyPSCIdentification | None = None
     address: CompanyPSCAddress | None = None
@@ -147,7 +162,7 @@ class CompanyProfile(BaseModel):
     type:enums.CompanyProfileType | None = None
     date_of_creation:datetime | None = None
     date_of_cessation:datetime | None = None
-    registered_office_address:CompanyProfileRegisteredOfficeAddress | None = None
+    registered_office_address:Address | None = None
     accounts: CompanyProfileAccounts | None = None
     confirmation_statement :CompanyProfileConfirmationStatement | None = None
     previous_company_names: list[CompanyProfilePreviousCompanyNames] | None = None

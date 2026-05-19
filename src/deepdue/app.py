@@ -9,7 +9,7 @@ async def main():
     api_key = os.environ["CH_API_KEY"]
     client = CompaniesHouseClient(api_key)
 
-    company = await client.SearchCompanies("tesco")
+    company = await client.SearchOfficers("Isa Lee Wolf")
     
     print(company)
 
