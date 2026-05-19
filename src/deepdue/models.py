@@ -2,6 +2,32 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from deepdue import enums
 
+class CompanyOfficerDateOfBirth(BaseModel):
+    month: int | None = None
+    year: int | None = None
+
+class CompanyOfficerAppointmentLinks(BaseModel):
+    appointments: str | None = None
+
+class CompanyOfficerLinks(BaseModel):
+    officer: CompanyOfficerAppointmentLinks | None = None
+    self_: str | None = Field(None, alias="self")
+
+class CompanyOfficer(BaseModel):
+    name: str | None = None
+    officer_role: enums.CompanyOfficerRoleType | None = None
+    appointed_on: datetime | None = None
+    resigned_on: datetime | None = None
+    date_of_birth: CompanyOfficerDateOfBirth | None = None
+    nationality: str | None = None
+    links: CompanyOfficerLinks | None = None
+
+class CompanyOfficers(BaseModel):
+    active_count: int | None = None
+    resigned_count: int | None = None
+    total_results: int | None = None
+    items: list[CompanyOfficer] | None = None
+
 class CompanyProfilePreviousCompanyNames(BaseModel):
     ceased_on: datetime | None = None
     effective_from: datetime | None = None

@@ -8,6 +8,10 @@ class CompaniesHouseClient:
             auth=(api_key, ""),
         )
     
-    async def GetCompanyProfile(self, company_number: str):
+    async def GetCompanyProfile(self, company_number: str) -> models.CompanyProfile:
         res = await self.client.get(f"/company/{company_number}")
         return models.CompanyProfile.model_validate(res.json())
+    
+    async def GetCompanyOfficers(self, company_number: str) -> models.CompanyOfficers:
+        res = await self.client.get(f"/company/{company_number}/officers")
+        return models.CompanyOfficers.model_validate(res.json())
