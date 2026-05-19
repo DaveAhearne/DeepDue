@@ -23,3 +23,7 @@ class CompaniesHouseClient:
     async def GetCompanyFilingHistory(self, company_number: str) -> models.CompanyFilingHistory:
         res = await self.client.get(f"/company/{company_number}/filing-history")
         return models.CompanyFilingHistory.model_validate(res.json())
+    
+    async def SearchCompanies(self, term: str) -> models.CompanySearchResults:
+        res = await self.client.get(f"/search/companies?q={term}")
+        return models.CompanySearchResults.model_validate(res.json())

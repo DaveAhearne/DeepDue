@@ -2,6 +2,30 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from deepdue import enums
 
+class CompanyProfileRegisteredOfficeAddress(BaseModel):
+    address_line_1: str | None = None
+    address_line_2: str | None = None
+    care_of: str | None = None
+    country: str | None = None
+    locality: str | None = None
+    po_box: str | None = None
+    postal_code: str | None = None
+    premises: str | None = None
+    region: str | None = None
+
+class CompanySearchResult(BaseModel):
+    company_number:str | None
+    company_name:str | None = Field(None, alias="title")
+    company_status:enums.CompanyStatusType | None = None
+    type:enums.CompanyProfileType | None = None
+    date_of_creation:datetime | None = None
+    date_of_cessation:datetime | None = None
+    address:CompanyProfileRegisteredOfficeAddress | None = None
+
+class CompanySearchResults(BaseModel):
+    total_results: int | None = None
+    items: list[CompanySearchResult] | None = None
+
 class CompanyFiling(BaseModel):
     date: datetime | None = None
     category: enums.CompanyFilingCategory | None = None
@@ -104,16 +128,7 @@ class CompanyProfileConfirmationStatement(BaseModel):
     next_made_up_to: datetime | None = None
     overdue: bool | None = None
 
-class CompanyProfileRegisteredOfficeAddress(BaseModel):
-    address_line_1: str | None = None
-    address_line_2: str | None = None
-    care_of: str | None = None
-    country: str | None = None
-    locality: str | None = None
-    po_box: str | None = None
-    postal_code: str | None = None
-    premises: str | None = None
-    region: str | None = None
+
 
 class CompanyProfileLastAccounts(BaseModel):
     made_up_to: datetime | None = None
