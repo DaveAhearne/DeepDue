@@ -7,6 +7,6 @@ def make_company_lookup_node(client: CompaniesHouseClient):
 
         company_profile = await client.GetCompanyProfile(company_number)
 
-        return {"companies": {**state["companies"], company_number: company_profile}}
+        return {"companies": {company_number: company_profile}}
 
     return lookup_company

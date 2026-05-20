@@ -7,6 +7,6 @@ def make_officer_extraction_node(client: CompaniesHouseClient):
 
         company_officers = await client.GetCompanyOfficers(company_number)
 
-        return {"officers": {**state["officers"], company_number: company_officers}}
+        return {"officers": {company_number: company_officers}}
 
     return officer_extraction

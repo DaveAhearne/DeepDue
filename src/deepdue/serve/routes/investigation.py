@@ -23,7 +23,7 @@ async def request_investigation(request: Request, payload: InvestigationRequest)
             "psc_statements": {},
             "filing_histories": {},
             "entities_to_investigate": [],
-            "entities_visited": set(),
+            "entities_visited": [],
             "depth": 0,
             "max_depth": 3,
             "flags": [],
