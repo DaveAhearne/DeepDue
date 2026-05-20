@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
 from deepdue.serve.schema import InvestigationRequest
 
@@ -13,19 +13,26 @@ async def request_investigation(request: Request, payload: InvestigationRequest)
     
     graph = request.app.state.investigation_graph
     
-    result = await graph.ainvoke({
-        "target_company_number": payload.company_number,
-        "target_company_name": "",
-        "companies": {},
-        "officers": {},
-        "pscs": {},
-        "filing_histories": {},
-        "entities_to_investigate": [],
-        "entities_visited": set(),
-        "depth": 0,
-        "max_depth": 3,
-        "flags": [],
-        "report": None
-    })
+    try:
+        result = await graph.ainvoke({
+            "target_company_number": payload.company_number,
+            "target_company_name": "",
+            "companies": {},
+            "officers": {},
+            "pscs": {},
+            "psc_statements": {},
+            "filing_histories": {},
+            "entities_to_investigate": [],
+            "entities_visited": set(),
+            "depth": 0,
+            "max_depth": 3,
+            "flags": [],
+            "report": None
+        })
 
-    return result
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )

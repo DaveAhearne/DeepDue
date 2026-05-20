@@ -8,6 +8,7 @@ class InvestigationState(TypedDict):
     companies: dict[str, models.CompanyProfile]
     officers: dict[str, models.CompanyOfficers]
     pscs: dict[str, models.CompanyPSCs]
+    psc_statements: dict[str, models.CompanyPSCStatements]
     filing_histories: dict[str, models.CompanyFilingHistory]
 
     entities_to_investigate: list[str]

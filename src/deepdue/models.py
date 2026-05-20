@@ -17,6 +17,19 @@ class Address(BaseModel):
     premises: str | None = None
     region: str | None = None
 
+class CompanyPSCStatement(BaseModel):
+    kind: str | None = None
+    notified_on: datetime | None = None
+    ceased_on: datetime | None = None
+    statement: str | None = None
+    linked_psc_name: str | None = None
+
+class CompanyPSCStatements(BaseModel):
+    active_count: int | None = None
+    ceased_count: int | None = None
+    total_results: int | None = None
+    items: list[CompanyPSCStatement] | None = None
+
 class OfficerSearchLinks(BaseModel):
     self_: str | None = Field(None, alias="self")
 
