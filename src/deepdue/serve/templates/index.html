@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepDue</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #1a1a1a;
+            --surface: #222222;
+            --surface-2: #2a2a2a;
+            --border: #333333;
+            --border-active: #555555;
+            --accent: #f0a500;
+            --accent-dim: rgba(240, 165, 0, 0.08);
+            --accent-mid: rgba(240, 165, 0, 0.25);
+            --text-primary: #efefef;
+            --text-secondary: #888888;
+            --text-tertiary: #444444;
+            --success: #4caf7d;
+            --danger: #e05454;
+            --sans: 'Inter', sans-serif;
+            --mono: 'IBM Plex Mono', monospace;
+            --display: 'Bebas Neue', sans-serif;
+            --nav-h: 52px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--sans);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAV */
+        nav {
+            height: var(--nav-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-family: var(--mono);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            margin-right: 2.5rem;
+        }
+
+        .nav-brand span { color: var(--accent); }
+
+        .nav-links { display: flex; flex: 1; }
+
+        .nav-link {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0 1rem;
+            height: var(--nav-h);
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s;
+        }
+
+        .nav-link:hover { color: var(--text-primary); }
+        .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
+
+        .api-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--text-tertiary);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.625rem;
+            border-radius: 3px;
+        }
+
+        .api-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
+
+        /* HERO */
+        .hero {
+            width: 100%;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 4rem 2.5rem 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: 'DEEPDUE';
+            position: absolute;
+            right: -2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--display);
+            font-size: 280px;
+            color: rgba(255,255,255,0.018);
+            pointer-events: none;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .hero-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .hero-title {
+            font-family: var(--display);
+            font-size: 88px;
+            line-height: 0.95;
+            letter-spacing: 0.02em;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title span { color: var(--accent); }
+
+        .hero-desc {
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--text-secondary);
+            max-width: 520px;
+            line-height: 1.65;
+        }
+
+        .hero-desc strong {
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        /* MAIN */
+        main {
+            flex: 1;
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 2.5rem;
+        }
+
+        /* SEARCH */
+        .search-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .search-input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--mono);
+            font-size: 14px;
+            color: var(--accent);
+            pointer-events: none;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--text-primary);
+            font-family: var(--sans);
+            font-size: 15px;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        input[type="text"]:focus { border-color: var(--accent-mid); }
+        input[type="text"]::placeholder { color: var(--text-tertiary); }
+
+        .btn-run {
+            background: var(--accent);
+            border: none;
+            border-radius: 3px;
+            color: #1a1a1a;
+            font-family: var(--sans);
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.04em;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: opacity 0.15s;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .btn-run:hover { opacity: 0.88; }
+        .btn-run:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .search-hint {
+            margin-top: 0.625rem;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-family: var(--mono);
+        }
+
+        /* RESULT PANEL */
+        .result-panel { display: none; margin-bottom: 1.5rem; }
+        .result-panel.visible { display: block; }
+
+        .result-header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            padding: 0.875rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .result-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-tertiary); flex-shrink: 0; }
+        .result-dot.running { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+        .result-dot.done { background: var(--success); }
+        .result-dot.error { background: var(--danger); }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        .result-label { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; }
+        .result-meta { font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); }
+
+        .result-body {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0 0 4px 4px;
+            padding: 1.5rem;
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1.9;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            min-height: 160px;
+            max-height: 560px;
+            overflow-y: auto;
+        }
+
+        .result-body.error { color: var(--danger); }
+
+        /* STATS */
+        .stats-row {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stats-row.visible { display: grid; }
+
+        .stat-cell {
+            background: var(--surface);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--display);
+            font-size: 36px;
+            line-height: 1;
+            color: var(--accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-sub { font-size: 12px; color: var(--text-secondary); }
+
+        /* FOOTER */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 0 2.5rem;
+            height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-text { font-size: 12px; color: var(--text-tertiary); }
+        .footer-links { margin-left: auto; display: flex; gap: 1.5rem; }
+
+        .footer-link {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .footer-link:hover { color: var(--text-secondary); }
+
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.25rem;
+            margin-left: auto;
+            background: none;
+            border: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 0;
+        }
+
+        .mobile-menu.open { display: flex; }
+
+        .mobile-menu .nav-link {
+            height: auto;
+            padding: 0.875rem 2.5rem;
+            border-bottom: none;
+            border-left: 2px solid transparent;
+        }
+
+        .mobile-menu .nav-link.active {
+            border-left-color: var(--accent);
+            border-bottom: none;
+        }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .nav-right { display: none; }
+            .hamburger { display: flex; }
+
+            .hero { padding: 2.5rem 1.25rem 2rem; }
+            .hero::before { display: none; }
+            .hero-title { font-size: 56px; }
+            .hero-desc { font-size: 14px; }
+
+            main { padding: 1.5rem 1.25rem; }
+
+            .search-row { flex-direction: column; }
+            .btn-run { width: 100%; text-align: center; }
+            .search-input-wrap { width: 100%; }
+
+            .stats-row { grid-template-columns: 1fr 1fr; }
+
+            nav { padding: 0 1.25rem; }
+        }
+
+        @media (max-width: 640px) {
+            footer {
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem 1.25rem;
+                gap: 0.75rem;
+            }
+
+            .footer-links {
+                margin-left: 0;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-brand">deep<span>due</span></a>
+    <div class="nav-links">
+        <a href="/" class="nav-link active">Investigate</a>
+        <a href="/investigations" class="nav-link">Investigations</a>
+        <a href="/settings" class="nav-link">Settings</a>
+    </div>
+    <div class="nav-right">
+        <div class="api-badge">
+            <div class="api-badge-dot"></div>
+            CH API
+        </div>
+    </div>
+
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+    <a href="/" class="nav-link active">Investigate</a>
+    <a href="/investigations" class="nav-link">Investigations</a>
+    <a href="/settings" class="nav-link">Settings</a>
+</div>
+
+
+<div class="hero">
+    <div class="hero-inner">
+        <p class="hero-eyebrow">UK Corporate Intelligence</p>
+        <h1 class="hero-title">Deep<span>Due</span></h1>
+        <p class="hero-desc">
+            Autonomous traversal of the <strong>Companies House entity graph</strong> — directors, PSC chains, filing histories, related companies. Surfaces <strong>phoenixing, layered ownership, and director network anomalies</strong> for human review.
+        </p>
+    </div>
+</div>
+
+<main>
+    <div class="search-container">
+        <div class="search-row">
+            <div class="search-input-wrap">
+                <span class="search-prefix">&gt;</span>
+                <input type="text" id="company-input" placeholder="Company name or registration number" autocomplete="off" spellcheck="false" />
+            </div>
+            <button class="btn-run" id="run-btn" onclick="runInvestigation()">Investigate</button>
+        </div>
+        <p class="search-hint">e.g. &nbsp;ACME TRADING LTD &nbsp;·&nbsp; 12345678</p>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+        <div class="result-header">
+            <div class="result-dot" id="result-dot"></div>
+            <span class="result-label" id="result-label">Initialising</span>
+            <span class="result-meta" id="result-meta"></span>
+        </div>
+        <pre class="result-body" id="result-body"></pre>
+    </div>
+
+    <div class="stats-row" id="stats-row">
+        <div class="stat-cell">
+            <div class="stat-label">Entities traversed</div>
+            <div class="stat-value" id="stat-entities">—</div>
+            <div class="stat-sub">companies &amp; officers</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-label">Flags raised</div>
+            <div class="stat-value" id="stat-flags">—</div>
+            <div class="stat-sub">patterns matched</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-label">API calls</div>
+            <div class="stat-value" id="stat-calls">—</div>
+            <div class="stat-sub">CH requests made</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-label">Duration</div>
+            <div class="stat-value" id="stat-duration">—</div>
+            <div class="stat-sub">seconds elapsed</div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <span class="footer-text">Investigation assistant — not a verdict machine. All data is public record via Companies House.</span>
+    <div class="footer-links">
+        <a href="https://developer.companieshouse.gov.uk" class="footer-link">CH API docs</a>
+        <a href="https://github.com/DaveAhearne/DeepDue" class="footer-link">GitHub</a>
+    </div>
+</footer>
+
+<script>
+    let startTime;
+
+    async function runInvestigation() {
+        const input = document.getElementById('company-input').value.trim();
+        if (!input) return;
+
+        const btn = document.getElementById('run-btn');
+        const panel = document.getElementById('result-panel');
+        const dot = document.getElementById('result-dot');
+        const label = document.getElementById('result-label');
+        const meta = document.getElementById('result-meta');
+        const body = document.getElementById('result-body');
+        const stats = document.getElementById('stats-row');
+
+        btn.disabled = true;
+        panel.classList.add('visible');
+        stats.classList.remove('visible');
+        dot.className = 'result-dot running';
+        label.textContent = 'Investigating — ' + input;
+        body.className = 'result-body';
+        body.textContent = '';
+        startTime = Date.now();
+
+        const timer = setInterval(() => {
+            meta.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+        }, 100);
+
+        try {
+            const res = await fetch('/investigation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ company_number: input })
+            });
+
+            if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
+            const data = await res.json();
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+
+            dot.className = 'result-dot done';
+            label.textContent = 'Complete — ' + input;
+            body.textContent = JSON.stringify(data, null, 2);
+
+            document.getElementById('stat-entities').textContent = data.entities_visited?.length ?? '—';
+            document.getElementById('stat-flags').textContent = data.flags?.length ?? '—';
+            document.getElementById('stat-calls').textContent = data.api_calls ?? '—';
+            document.getElementById('stat-duration').textContent = elapsed + 's';
+            stats.classList.add('visible');
+
+        } catch (err) {
+            dot.className = 'result-dot error';
+            label.textContent = 'Error';
+            body.className = 'result-body error';
+            body.textContent = err.message;
+        } finally {
+            clearInterval(timer);
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('company-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') runInvestigation();
+    });
+
+    function toggleMenu() {
+        const btn = document.getElementById('hamburger');
+        const menu = document.getElementById('mobile-menu');
+        btn.classList.toggle('open');
+        menu.classList.toggle('open');
+    }
+</script>
+
+</body>
+</html>
