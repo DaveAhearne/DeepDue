@@ -17,16 +17,8 @@ async def request_investigation(request: Request, payload: InvestigationRequest)
         result = await graph.ainvoke({
             "target_company_number": payload.company_number,
             "target_company_name": "",
-            "companies": {},
-            "officers": {},
-            "pscs": {},
-            "psc_statements": {},
-            "filing_histories": {},
-            "entities_to_investigate": [],
-            "entities_visited": [],
             "depth": 0,
             "max_depth": 3,
-            "flags": [],
             "report": None
         })
 
