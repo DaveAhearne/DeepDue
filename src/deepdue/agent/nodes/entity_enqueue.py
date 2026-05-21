@@ -36,6 +36,6 @@ def node(state: InvestigationState):
 
     return {
         "entities_to_investigate": entities_to_investigate,
-        "entities_visited": [state["target_company_number"]]
+        "entities_visited": [current_entity]
     }
 
