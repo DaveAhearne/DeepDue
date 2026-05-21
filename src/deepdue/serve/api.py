@@ -17,6 +17,11 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     log.configure_logging()
 
+    os.environ["LANGSMITH_TRACING"] = settings.langsmith_tracing
+    os.environ["LANGSMITH_ENDPOINT"] = settings.langsmith_endpoint
+    os.environ["LANGSMITH_API_KEY"] = settings.langsmith_api_key
+    os.environ["LANGSMITH_PROJECT"] = settings.langsmith_project
+
     ch_client = CompaniesHouseClient(settings.ch_api_key)
     app.state.investigation_graph = graph.build_graph(ch_client)
     

@@ -10,7 +10,8 @@ dependencies = [
     "pydantic",
     "langgraph",
     "fastapi[standard]",
-    "pydantic-settings"
+    "pydantic-settings",
+    "langsmith"
 ]
 
 [tool.setuptools.packages.find]
