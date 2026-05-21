@@ -14,6 +14,11 @@ dependencies = [
     "langsmith"
 ]
 
+[project.optional-dependencies]
+dev = [
+  "langgraph-cli[inmem]",
+]
+
 [tool.setuptools.packages.find]
 where = ["src", "."]
 include = ["deepdue*"]
