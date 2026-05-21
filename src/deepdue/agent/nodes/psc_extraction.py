@@ -2,7 +2,7 @@ from deepdue.agent.state import InvestigationState
 from deepdue.data.companies_house import CompaniesHouseClient
 
 def make_psc_extraction_node(client: CompaniesHouseClient):
-    async def psc_extraction(state: InvestigationState):
+    async def node(state: InvestigationState):
         result = {}
 
         company_number = state["target_company_number"]
@@ -18,4 +18,4 @@ def make_psc_extraction_node(client: CompaniesHouseClient):
 
         return result
 
-    return psc_extraction
+    return node

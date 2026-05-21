@@ -12,8 +12,8 @@ class InvestigationState(TypedDict):
     psc_statements: Annotated[dict[str, models.CompanyPSCStatements], operator.or_]
     filing_histories: Annotated[dict[str, models.CompanyFilingHistory], operator.or_]
 
-    entities_to_investigate: Annotated[list[str], operator.add]
-    entities_visited: Annotated[list[str], operator.add]
+    entities_to_investigate: Annotated[list[models.InvestigationEntity], operator.add]
+    entities_visited: Annotated[list[models.InvestigationEntity], operator.add]
     depth: int
     max_depth: int
 

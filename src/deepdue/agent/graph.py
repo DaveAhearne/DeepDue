@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, START, END
 from deepdue.agent.state import InvestigationState
-from deepdue.agent.nodes import company_lookup, officer_extraction, psc_extraction, filing_history
+from deepdue.agent.nodes import company_lookup, officer_extraction, psc_extraction, filing_history, entity_enqueue
 from deepdue.data.companies_house import CompaniesHouseClient
 
 def build_graph(ch_client: CompaniesHouseClient):
@@ -22,6 +22,9 @@ def build_graph(ch_client: CompaniesHouseClient):
     builder.add_edge("filing_history", "pscs_extraction")
 
     builder.add_node("pscs_extraction", pscs_extraction_node)
-    builder.add_edge("pscs_extraction", END)
+    builder.add_edge("pscs_extraction", "entity_enqueue")
+
+    builder.add_node("entity_enqueue", entity_enqueue.node)
+    builder.add_edge("entity_enqueue", END)
 
     return builder.compile()

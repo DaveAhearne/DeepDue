@@ -1,6 +1,13 @@
 from datetime import datetime
 from pydantic import BaseModel, Field
 from deepdue import enums
+from dataclasses import dataclass
+
+@dataclass
+class InvestigationEntity:
+    id: str
+    type: enums.InvestigationEntityType
+    depth: int
 
 class DateOfBirth(BaseModel):
     month: int | None = None

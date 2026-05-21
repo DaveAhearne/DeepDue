@@ -1,5 +1,10 @@
 from enum import Enum
 
+class InvestigationEntityType(Enum):
+    COMPANY = "company"
+    OFFICER = "officer"
+    PSC_ENTITY = "psc_entity"
+
 class CompanyFilingCategory(str, Enum):
     ACCOUNTS = "accounts"
     ADDRESS = "address"
