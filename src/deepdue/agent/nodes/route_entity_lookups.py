@@ -3,7 +3,7 @@ from deepdue.agent.state import InvestigationState
 from deepdue.enums import InvestigationEntityType 
 
 def node(state: InvestigationState):
-    next_entity = next(e for e in state["entities_to_investigate"] if e.id == state["target_company_number"])
+    next_entity = next(e for e in state["entities_to_investigate"] if e.id == state["current_entity_id"])
 
     match next_entity.type:
         case InvestigationEntityType.COMPANY:

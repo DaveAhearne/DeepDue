@@ -3,7 +3,7 @@ from deepdue import models
 from deepdue import enums
 
 def node(state: InvestigationState):
-    current_entity = next(e for e in state["entities_to_investigate"] if e.id == state["target_company_number"])
+    current_entity = next(e for e in state["entities_to_investigate"] if e.id == state["current_entity_id"])
 
     entities_to_investigate: list[models.InvestigationEntity] = []
 
@@ -32,7 +32,10 @@ def node(state: InvestigationState):
     entities_to_investigate.extend(officer_entities)
     entities_to_investigate.extend(psc_entities)
 
-    entities_to_investigate = [e for e in entities_to_investigate if e.depth <= state["max_depth"]]
+    entities_to_investigate = [
+        e for e in entities_to_investigate 
+        if e.depth <= state["max_depth"]
+    ]
 
     return {
         "entities_to_investigate": entities_to_investigate,

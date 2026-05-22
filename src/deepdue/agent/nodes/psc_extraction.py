@@ -5,7 +5,7 @@ def make_psc_extraction_node(client: CompaniesHouseClient):
     async def node(state: InvestigationState):
         result = {}
 
-        company_number = state["target_company_number"]
+        company_number = state["current_entity_id"]
         company_profile = state["companies"][company_number]
         
         if(company_profile.links and company_profile.links.persons_with_significant_control):
