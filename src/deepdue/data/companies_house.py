@@ -23,6 +23,16 @@ class CompaniesHouseClient:
         res = await self.client.get(f"/company/{company_number}/officers")
         res.raise_for_status()
         return models.CompanyOfficers.model_validate(res.json())
+
+    async def GetOfficerAppointments(self, appointments_path: str) -> models.OfficerAppointments:
+        """Fetch all company appointments for an officer.
+        The appointments_path comes from officer.links.officer.appointments
+        (e.g. /officers/abc123/appointments). Returns each company the officer
+        is or was appointed to — the primary mechanism for graph traversal
+        from a director node outward to related companies."""
+        res = await self.client.get(appointments_path)
+        res.raise_for_status()
+        return models.OfficerAppointments.model_validate(res.json())
     
     async def GetCompanyPSCs(self, company_number: str) -> models.CompanyPSCs:
         """Fetch the persons with significant control for a company.

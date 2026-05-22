@@ -9,6 +9,20 @@ class InvestigationEntity:
     type: enums.InvestigationEntityType
     depth: int
 
+class OfficerAppointedTo(BaseModel):
+    company_number: str | None = None
+    company_name: str | None = None
+    company_status: enums.CompanyStatusType | None = None
+
+class OfficerAppointmentItem(BaseModel):
+    appointed_to: OfficerAppointedTo | None = None
+    appointed_on: datetime | None = None
+    resigned_on: datetime | None = None
+
+class OfficerAppointments(BaseModel):
+    total_results: int | None = None
+    items: list[OfficerAppointmentItem] | None = None
+
 class DateOfBirth(BaseModel):
     month: int | None = None
     year: int | None = None
