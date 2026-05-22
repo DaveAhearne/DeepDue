@@ -16,6 +16,9 @@ def build_graph(ch_client: CompaniesHouseClient):
     officer_extraction_node = officer_extraction.make_officer_extraction_node(ch_client)
     pscs_extraction_node = psc_extraction.make_psc_extraction_node(ch_client)
     filing_history_node = filing_history.make_filing_history_extraction_node(ch_client)
+    
+    should_continue_node = should_continue.node
+    entity_enqueue_node = entity_enqueue.node
 
     builder = StateGraph(InvestigationState)
     builder.add_edge(START, "get_company")
@@ -32,10 +35,10 @@ def build_graph(ch_client: CompaniesHouseClient):
     builder.add_node("pscs_extraction", pscs_extraction_node)
     builder.add_edge("pscs_extraction", "entity_enqueue")
 
-    builder.add_node("entity_enqueue", entity_enqueue.node)
+    builder.add_node("entity_enqueue", entity_enqueue_node)
     builder.add_conditional_edges(
         "entity_enqueue", 
-        should_continue.node,
+        should_continue_node,
         {
             "advance_traversal":"advance_traversal",
             "end": END
