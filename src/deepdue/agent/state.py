@@ -3,14 +3,16 @@ from typing import TypedDict, Annotated
 from deepdue import models
 from pydantic import BaseModel, Field
 
+from deepdue.enums import InvestigationEntityType
+
 class InputState(BaseModel):
-    target_company_number: str
-    target_company_name: str = ""
+    current_entity_id: str
+    current_entity_type: InvestigationEntityType = InvestigationEntityType.COMPANY
     max_depth: int = Field(default=3)
 
 class InvestigationState(TypedDict):
-    target_company_number: str
-    target_company_name: str
+    current_entity_id: str
+    current_entity_type: InvestigationEntityType
 
     companies: Annotated[dict[str, models.CompanyProfile], operator.or_]
     officers: Annotated[dict[str, models.CompanyOfficers], operator.or_]

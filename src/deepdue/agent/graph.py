@@ -1,7 +1,7 @@
 import os
 from langgraph.graph import StateGraph, START, END
 from deepdue.agent.state import InputState, InvestigationState
-from deepdue.agent.nodes import company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, entity_enqueue, route_entity_lookups, should_continue, officer_appointment_extraction
+from deepdue.agent.nodes import route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, entity_enqueue, route_entity_lookups, should_continue, officer_appointment_extraction
 from deepdue.data.companies_house import CompaniesHouseClient
 
 # No dep version for local debugging with langgraph dev
@@ -20,19 +20,26 @@ def build_graph(ch_client: CompaniesHouseClient):
 
     should_continue_node = should_continue.node
     entity_enqueue_node = entity_enqueue.node
-    route_entity_lookups_node = route_entity_lookups.node
 
     builder = StateGraph(InvestigationState, input=InputState)
-    builder.add_edge(START, "get_company")
+    
+    builder.add_node("route_extraction_by_type", route_lookup_by_type.node)
+    builder.add_edge(START, "route_extraction_by_type")
+    
+    builder.add_conditional_edges(
+        "route_extraction_by_type",
+        route_lookup_by_type.node,
+        {
+            "get_company": "get_company",
+            "get_officer_appointments": "get_officer_appointments",
+        }
+    )
     
     builder.add_node("get_company", company_lookup_node)
     builder.add_edge("get_company", "officer_extraction")
     
     builder.add_node("officer_extraction", officer_extraction_node)
-    builder.add_edge("officer_extraction", "get_officer_appointments")
-
-    builder.add_node("get_officer_appointments", officer_appointment_extraction_node)
-    builder.add_edge("get_officer_appointments", "filing_history")
+    builder.add_edge("officer_extraction", "filing_history")
 
     builder.add_node("filing_history", filing_history_node)
     builder.add_edge("filing_history", "pscs_extraction")
@@ -50,15 +57,10 @@ def build_graph(ch_client: CompaniesHouseClient):
         }
     )
 
+    builder.add_node("get_officer_appointments", officer_appointment_extraction_node)
+    builder.add_edge("get_officer_appointments", "entity_enqueue")
+
     builder.add_node("dequeue_next", dequeue_next.node)
-    builder.add_conditional_edges(
-        "dequeue_next", 
-        route_entity_lookups_node,
-        {
-            "get_company":"get_company",
-            "get_officer_appointments":"get_officer_appointments",
-            "end": END
-        }
-    )
+    builder.add_edge("dequeue_next", "route_extraction_by_type")
     
     return builder.compile()

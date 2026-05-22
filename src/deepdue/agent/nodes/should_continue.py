@@ -5,6 +5,6 @@ def node(state: InvestigationState):
     visited_ids = {e.id for e in state["entities_visited"]}
 
     if([e for e in state["entities_to_investigate"] if e.id not in visited_ids]):
-        return "advance_traversal"
+        return "dequeue_next"
     
     return END
