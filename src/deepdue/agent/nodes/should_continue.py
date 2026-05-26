@@ -7,4 +7,4 @@ def node(state: InvestigationState):
     if([e for e in state["entities_to_investigate"] if e.id not in visited_ids]):
         return "dequeue_next"
     
-    return END
+    return "end"

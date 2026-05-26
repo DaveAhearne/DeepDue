@@ -16,8 +16,7 @@ async def request_investigation(request: Request, payload: InvestigationRequest)
     
     try:
         result = await graph.ainvoke({
-            "current_entity_id": payload.company_number,
-            "current_entity_type": InvestigationEntityType.COMPANY,
+            "target_company_number": payload.company_number,
             "max_depth": 2,
         })
 

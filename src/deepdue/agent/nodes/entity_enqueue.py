@@ -11,7 +11,7 @@ def node(state: InvestigationState):
         models.InvestigationEntity(company_id, enums.InvestigationEntityType.COMPANY, current_entity.depth + 1) 
         for (company_id, _) 
         in state["companies"].items()
-        if company_id != state["current_entity_id"]
+        if company_id != state["current_entity_id"] and company_id not in state["entities_visited"]
     ]
 
     officer_entities = [

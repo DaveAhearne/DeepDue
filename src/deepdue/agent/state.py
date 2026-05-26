@@ -6,11 +6,12 @@ from pydantic import BaseModel, Field
 from deepdue.enums import InvestigationEntityType
 
 class InputState(BaseModel):
-    current_entity_id: str
-    current_entity_type: InvestigationEntityType = InvestigationEntityType.COMPANY
+    target_company_number: str
     max_depth: int = Field(default=2)
 
 class InvestigationState(TypedDict):
+    target_company_number: str
+    
     current_entity_id: str
     current_entity_type: InvestigationEntityType
 
