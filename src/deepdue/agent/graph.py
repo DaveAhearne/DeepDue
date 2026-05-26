@@ -1,7 +1,7 @@
 import os
 from langgraph.graph import StateGraph, START, END
 from deepdue.agent.state import InputState, InvestigationState
-from deepdue.agent.nodes import route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, entity_enqueue, route_entity_lookups, should_continue, officer_appointment_extraction
+from deepdue.agent.nodes import init, route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, entity_enqueue, route_entity_lookups, should_continue, officer_appointment_extraction
 from deepdue.data.companies_house import CompaniesHouseClient
 
 # No dep version for local debugging with langgraph dev
@@ -22,13 +22,15 @@ def build_graph(ch_client: CompaniesHouseClient):
     entity_enqueue_node = entity_enqueue.node
 
     builder = StateGraph(InvestigationState, input=InputState)
+
+    builder.add_edge(START, "init")
+    builder.add_node("init", init.node)
+    builder.add_edge("init", "route_extraction_by_type")
     
     builder.add_node("route_extraction_by_type", route_lookup_by_type.node)
-    builder.add_edge(START, "route_extraction_by_type")
-    
     builder.add_conditional_edges(
         "route_extraction_by_type",
-        route_lookup_by_type.node,
+        route_lookup_by_type.route,
         {
             "get_company": "get_company",
             "get_officer_appointments": "get_officer_appointments",

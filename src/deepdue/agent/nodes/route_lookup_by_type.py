@@ -2,7 +2,10 @@ from langgraph.graph import END
 from deepdue.agent.state import InvestigationState
 from deepdue.enums import InvestigationEntityType 
 
-def node(state: InvestigationState):
+def node(state: InvestigationState) -> dict:
+    return {}
+
+def route(state: InvestigationState) -> str:
     current_entity_type = state["current_entity_type"]
 
     match current_entity_type:

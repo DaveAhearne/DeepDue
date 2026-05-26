@@ -8,7 +8,7 @@ from deepdue.enums import InvestigationEntityType
 class InputState(BaseModel):
     current_entity_id: str
     current_entity_type: InvestigationEntityType = InvestigationEntityType.COMPANY
-    max_depth: int = Field(default=3)
+    max_depth: int = Field(default=2)
 
 class InvestigationState(TypedDict):
     current_entity_id: str

@@ -1,6 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, Request
 
+from deepdue.enums import InvestigationEntityType
 from deepdue.serve.schema import InvestigationRequest
 
 logger = logging.getLogger(__name__)
@@ -15,11 +16,9 @@ async def request_investigation(request: Request, payload: InvestigationRequest)
     
     try:
         result = await graph.ainvoke({
-            "target_company_number": payload.company_number,
-            "target_company_name": "",
-            "depth": 0,
-            "max_depth": 3,
-            "report": None
+            "current_entity_id": payload.company_number,
+            "current_entity_type": InvestigationEntityType.COMPANY,
+            "max_depth": 2,
         })
 
         return result
