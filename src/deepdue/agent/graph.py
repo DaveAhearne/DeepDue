@@ -1,7 +1,7 @@
 import os
 from langgraph.graph import StateGraph, START, END
 from deepdue.agent.state import InputState, InvestigationState
-from deepdue.agent.nodes import init, route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, entity_enqueue, route_entity_lookups, should_continue, officer_appointment_extraction
+from deepdue.agent.nodes import enqueue_company_details, enqueue_officer_details, init, route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, route_entity_lookups, should_continue, officer_appointment_extraction
 from deepdue.data.companies_house import CompaniesHouseClient
 
 # No dep version for local debugging with langgraph dev
@@ -19,7 +19,8 @@ def build_graph(ch_client: CompaniesHouseClient):
     officer_appointment_extraction_node = officer_appointment_extraction.make_officer_appointment_extraction_node(ch_client)
 
     should_continue_node = should_continue.node
-    entity_enqueue_node = entity_enqueue.node
+    enqueue_officer_node = enqueue_officer_details.node
+    enqueue_company_node = enqueue_company_details.node
 
     builder = StateGraph(InvestigationState, input=InputState)
 
@@ -47,11 +48,11 @@ def build_graph(ch_client: CompaniesHouseClient):
     builder.add_edge("filing_history", "pscs_extraction")
 
     builder.add_node("pscs_extraction", pscs_extraction_node)
-    builder.add_edge("pscs_extraction", "entity_enqueue")
+    builder.add_edge("pscs_extraction", "enqueue_company")
 
-    builder.add_node("entity_enqueue", entity_enqueue_node)
+    builder.add_node("enqueue_company", enqueue_company_node)
     builder.add_conditional_edges(
-        "entity_enqueue", 
+        "enqueue_company", 
         should_continue_node,
         {
             "dequeue_next":"dequeue_next",
@@ -60,7 +61,17 @@ def build_graph(ch_client: CompaniesHouseClient):
     )
 
     builder.add_node("get_officer_appointments", officer_appointment_extraction_node)
-    builder.add_edge("get_officer_appointments", "entity_enqueue")
+    builder.add_edge("get_officer_appointments", "enqueue_officer")
+
+    builder.add_node("enqueue_officer", enqueue_officer_node)
+    builder.add_conditional_edges(
+            "enqueue_officer", 
+            should_continue_node,
+            {
+                "dequeue_next":"dequeue_next",
+                "end": END
+            }
+        )
 
     builder.add_node("dequeue_next", dequeue_next.node)
     builder.add_edge("dequeue_next", "route_extraction_by_type")

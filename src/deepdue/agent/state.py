@@ -11,7 +11,7 @@ class InputState(BaseModel):
 
 class InvestigationState(TypedDict):
     target_company_number: str
-    
+
     current_entity_id: str
     current_entity_type: InvestigationEntityType
 
@@ -24,7 +24,6 @@ class InvestigationState(TypedDict):
 
     entities_to_investigate: Annotated[list[models.InvestigationEntity], operator.add]
     entities_visited: Annotated[list[models.InvestigationEntity], operator.add]
-    depth: int
     max_depth: int
 
     flags: Annotated[list[str], operator.add]

@@ -21,6 +21,11 @@ class CompanyFilingCategory(str, Enum):
     DISSOLUTION = "dissolution"
     PERSONS_WITH_SIGNIFICANT_CONTROL = "persons-with-significant-control"
     CONFIRMATION_STATEMENT = "confirmation-statement"
+    INSOLVENCY = "insolvency"
+    CHANGE_OF_CONSTITUTION = "change-of-constitution"
+    AUDITORS = "auditors"
+    OFFICER = "officer"
+    OTHER = "other"
 
 class CompanyOfficerRoleType(str, Enum):
     CIC_MANAGER = "cic-manager"
