@@ -17,7 +17,7 @@ async def request_investigation(request: Request, payload: InvestigationRequest)
     try:
         result = await graph.ainvoke({
             "target_company_number": payload.company_number,
-            "max_depth": 2,
+            "max_depth": 1,
         })
 
         return result

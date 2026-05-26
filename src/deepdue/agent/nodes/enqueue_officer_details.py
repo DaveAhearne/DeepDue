@@ -1,6 +1,7 @@
 from deepdue.agent.state import InvestigationState
 from deepdue import models
 from deepdue import enums
+from langsmith import get_current_run_tree
 
 def node(state: InvestigationState):
     current_entity = next(e for e in state["entities_to_investigate"] if e.id == state["current_entity_id"])
@@ -21,6 +22,17 @@ def node(state: InvestigationState):
         e for e in company_entities
         if e.depth <= state["max_depth"]
     ]
+
+    run = get_current_run_tree()
+    if run:
+        run.metadata.update({
+            "companies_visited": len(state["companies"]),
+            "officers_visited": len(state["officers"]),
+            "appointments_visited": len(state["appointments"]),
+            "entities_queued": len(state["entities_to_investigate"]),
+            "entities_visited": len(state["entities_visited"]),
+            "depth": current_entity.depth,
+        })
 
     return {
         "entities_to_investigate": entities_to_investigate,
