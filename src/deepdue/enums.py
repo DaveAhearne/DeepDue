@@ -1,5 +1,12 @@
 from enum import Enum
 
+class FlagPatternType(str, Enum):
+    PHOENIXING = "phoenixing"
+    DIRECTOR_NETWORK_ANOMALY = "director-network-anomaly"
+    ADDRESS_CLUSTERING = "address-clustering"
+    FILING_IRREGULARITY = "filing-irregularity"
+    CIRCULAR_OWNERSHIP = "circular-ownership"
+    
 class InvestigationEntityType(Enum):
     COMPANY = "company"
     OFFICER = "officer"

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from deepdue.agent import graph
 from deepdue.data.companies_house import CompaniesHouseClient
+from deepdue import llm
 from deepdue.serve import log
 from deepdue.config import settings
 from deepdue.serve.routes.health import router as health_router
@@ -23,7 +24,9 @@ async def lifespan(app: FastAPI):
     os.environ["LANGSMITH_PROJECT"] = settings.langsmith_project
 
     ch_client = CompaniesHouseClient(settings.ch_api_key)
-    app.state.investigation_graph = graph.build_graph(ch_client)
+    llm_clients = llm.make_llm_clients()
+    
+    app.state.investigation_graph = graph.build_graph(ch_client, llm_clients)
     
     yield
     

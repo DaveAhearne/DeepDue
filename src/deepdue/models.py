@@ -3,6 +3,15 @@ from pydantic import BaseModel, Field
 from deepdue import enums
 from dataclasses import dataclass
 
+class Flag(BaseModel):
+    pattern_type: enums.FlagPatternType
+    entity_ids: list[str]
+    confidence: float
+    severity: float
+    scale: float
+    reasoning: list[str]
+    evidence: dict
+
 @dataclass
 class InvestigationEntity:
     id: str
@@ -90,7 +99,6 @@ class CompanyFilingHistory(BaseModel):
     filing_history_status: str | None = None
     items: list[CompanyFiling] | None = None
 
-
 class CompanyPSCAddress(BaseModel):
     address_line_1: str | None = None
     address_line_2: str | None = None
@@ -176,8 +184,6 @@ class CompanyProfileConfirmationStatement(BaseModel):
     next_due: datetime | None = None
     next_made_up_to: datetime | None = None
     overdue: bool | None = None
-
-
 
 class CompanyProfileLastAccounts(BaseModel):
     made_up_to: datetime | None = None

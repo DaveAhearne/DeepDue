@@ -16,4 +16,11 @@ class Settings(BaseSettings):
 
     log_level: str = "INFO"
 
+    llm_provider: str = "ollama"
+    llm_base_url: str = "http://localhost:11434"
+    
+    llm_extraction_model: str = "llama3.1:8b"
+    llm_reasoning_model: str = "llama3.1:8b"
+    llm_synthesis_model: str = "llama3.1:8b"
+
 settings = Settings()

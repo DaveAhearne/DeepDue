@@ -11,6 +11,7 @@ dependencies = [
     "langgraph",
     "fastapi[standard]",
     "pydantic-settings",
+    "litellm",
     "langsmith"
 ]
 
