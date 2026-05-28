@@ -1,5 +1,12 @@
 from enum import Enum
 
+class CacheEntityType(str, Enum):
+    COMPANY = "company"
+    OFFICER = "officer"
+    PSC = "psc"
+    PSC_STATEMENT = "psc-statement"
+    FILING_HISTORY = "filing-history"
+
 class FlagPatternType(str, Enum):
     PHOENIXING = "phoenixing"
     DIRECTOR_NETWORK_ANOMALY = "director-network-anomaly"

@@ -125,3 +125,10 @@ src/deepdue/
 ## Disclaimer
 
 DeepDue is a research and educational project. It is not a fraud detection system, compliance tool, or replacement for professional due diligence. All data retrieved is public record via the Companies House API. No data is scraped or harvested beyond what the API provides.
+
+---
+
+Running qdrant:
+```
+docker run -d --name deepdue-qdrant -p 6333:6333 qdrant/qdrant
+```

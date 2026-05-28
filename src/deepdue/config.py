@@ -23,4 +23,8 @@ class Settings(BaseSettings):
     llm_reasoning_model: str = "llama3.1:8b"
     llm_synthesis_model: str = "llama3.1:8b"
 
+    qdrant_host: str = "http://localhost"
+    qdrant_port: str = "6333"
+    cache_ttl_seconds: int = 86400
+
 settings = Settings()

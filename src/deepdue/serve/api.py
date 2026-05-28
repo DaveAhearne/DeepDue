@@ -4,6 +4,7 @@ import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from deepdue.agent import graph
+from deepdue.data.cache import QdrantCHCache
 from deepdue.data.companies_house import CompaniesHouseClient
 from deepdue import llm
 from deepdue.serve import log
@@ -23,7 +24,8 @@ async def lifespan(app: FastAPI):
     os.environ["LANGSMITH_API_KEY"] = settings.langsmith_api_key
     os.environ["LANGSMITH_PROJECT"] = settings.langsmith_project
 
-    ch_client = CompaniesHouseClient(settings.ch_api_key)
+    ch_cache = QdrantCHCache(settings.qdrant_host, settings.qdrant_port, settings.cache_ttl_seconds)
+    ch_client = CompaniesHouseClient(settings.ch_api_key, ch_cache)
     llm_clients = llm.make_llm_clients()
     
     app.state.investigation_graph = graph.build_graph(ch_client, llm_clients)
