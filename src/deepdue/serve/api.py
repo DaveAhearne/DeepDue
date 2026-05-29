@@ -1,4 +1,5 @@
 import os
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 import logging
 from fastapi import FastAPI
@@ -39,6 +40,8 @@ app = FastAPI(
     docs_url="/docs",
     lifespan=lifespan,
 )
+
+app.mount("/static", StaticFiles(directory="src/deepdue/serve/static"), name="static")
 
 app.include_router(health_router)
 app.include_router(home_router)
