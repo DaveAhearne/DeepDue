@@ -1,10 +1,6 @@
 from typing import Callable, Awaitable, TypedDict
-import litellm
 from litellm import acompletion
 from deepdue.config import settings
-
-litellm.callbacks = ["langsmith"]
-litellm.langsmith_batch_size = 1
 
 LLMClient = Callable[[list[dict], float, dict], Awaitable[str]]
 
@@ -20,7 +16,7 @@ def make_llm_client(model: str) -> LLMClient:
             messages=messages,
             api_base=settings.llm_base_url,
             temperature=temperature,
-            max_tokens=2048,
+            max_tokens=None,
             metadata = meta or {},
         )
         return response.choices[0].message.content

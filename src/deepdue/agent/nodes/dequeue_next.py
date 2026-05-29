@@ -7,5 +7,6 @@ def node(state: InvestigationState):
     
     return {
         "current_entity_id": next_entity.id,
-        "current_entity_type": next_entity.type
+        "current_entity_type": next_entity.type,
+        "entities_visited": [next_entity],
     }
