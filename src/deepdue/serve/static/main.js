@@ -1,73 +1,73 @@
-let startTime;
+let selectedEntities = new Set();
+let timer = null;
+let startTime = null;
 
-async function runInvestigation() {
-    const input = document.getElementById('company-input').value.trim();
-    if (!input) return;
+const NODE_LABELS = {
+    init: 'init',
+    route_extraction_by_type: 'route',
+    get_company: 'company_lookup',
+    officer_extraction: 'officer_extraction',
+    filing_history: 'filing_history',
+    pscs_extraction: 'psc_extraction',
+    enqueue_company: 'enqueue_company',
+    get_officer_appointments: 'officer_appointments',
+    enqueue_officer: 'enqueue_officer',
+    should_continue: 'should_continue',
+    dequeue_next: 'dequeue_next',
+    pattern_detection: 'pattern_detection',
+};
 
-    const btn = document.getElementById('run-btn');
-    const panel = document.getElementById('result-panel');
-    const dot = document.getElementById('result-dot');
-    const label = document.getElementById('result-label');
-    const meta = document.getElementById('result-meta');
-    const body = document.getElementById('result-body');
-    const stats = document.getElementById('stats-row');
-
-    btn.disabled = true;
-    panel.classList.add('visible');
-    stats.classList.remove('visible');
-    dot.className = 'result-dot running';
-    label.textContent = 'Investigating — ' + input;
-    body.className = 'result-body';
-    body.textContent = '';
+// Start timer when SSE connection opens
+document.addEventListener('htmx:sseOpen', () => {
     startTime = Date.now();
-
-    const timer = setInterval(() => {
-        meta.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+    timer = setInterval(() => {
+        const el = document.getElementById('log-meta');
+        if (el) el.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
     }, 100);
+});
 
-    try {
-        const res = await fetch('/investigation', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ company_number: input })
-        });
+// Stop timer when SSE connection closes
+document.addEventListener('htmx:sseClose', () => {
+    clearInterval(timer);
+    timer = null;
+});
 
-        if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.detail ?? `Server returned ${res.status}`);
-        }
+// Reset state when a new investigation is submitted
+document.addEventListener('htmx:beforeRequest', () => {
+    selectedEntities.clear();
+    updateInvestigateButton();
+});
 
-        const data = await res.json();
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+// Multi-select via event delegation (flags panel is dynamically swapped in)
+document.addEventListener('click', e => {
+    const card = e.target.closest('.flag-card');
+    if (!card) return;
 
-        dot.className = 'result-dot done';
-        label.textContent = 'Complete — ' + input;
-        body.textContent = JSON.stringify(data, null, 2);
+    const entities = (card.dataset.entities || '').split(',').filter(Boolean);
 
-        document.getElementById('stat-entities').textContent = data.entities_visited?.length ?? '—';
-        document.getElementById('stat-flags').textContent = data.flags?.length ?? '—';
-        document.getElementById('stat-calls').textContent = data.api_calls ?? '—';
-        document.getElementById('stat-duration').textContent = elapsed + 's';
-        stats.classList.add('visible');
+    if (card.classList.contains('selected')) {
+        card.classList.remove('selected');
+        entities.forEach(id => selectedEntities.delete(id));
+    } else {
+        card.classList.add('selected');
+        entities.forEach(id => selectedEntities.add(id));
+    }
 
-    } catch (err) {
-        dot.className = 'result-dot error';
-        label.textContent = 'Error';
-        body.className = 'result-body error';
-        body.textContent = err.message;
-    } finally {
-        clearInterval(timer);
-        btn.disabled = false;
+    updateInvestigateButton();
+});
+
+function updateInvestigateButton() {
+    const btn = document.getElementById('btn-investigate');
+    if (!btn) return;
+    if (selectedEntities.size > 0) {
+        btn.classList.add('visible');
+        btn.textContent = `Investigate selected (${selectedEntities.size})`;
+    } else {
+        btn.classList.remove('visible');
     }
 }
 
-document.getElementById('company-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') runInvestigation();
-});
-
 function toggleMenu() {
-    const btn = document.getElementById('hamburger');
-    const menu = document.getElementById('mobile-menu');
-    btn.classList.toggle('open');
-    menu.classList.toggle('open');
+    document.getElementById('hamburger').classList.toggle('open');
+    document.getElementById('mobile-menu').classList.toggle('open');
 }

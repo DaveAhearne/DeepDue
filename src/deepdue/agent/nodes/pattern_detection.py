@@ -1,4 +1,5 @@
 import json
+import logging
 
 from langsmith import get_current_run_tree
 from deepdue import models
@@ -31,6 +32,9 @@ scale: proportion of the overall network implicated, 0.0 to 1.0
 reasoning: a single string explaining specifically why this count is suspicious in context
 """
 
+logger = logging.getLogger(__name__)
+
+MAX_RETRIES = 3
 MIN_APPOINTMENTS = 10
 
 def make_pattern_detection_node(llm: LLMClient):
@@ -60,19 +64,23 @@ def make_pattern_detection_node(llm: LLMClient):
             {"role": "user", "content": f"{json.dumps(officer_appointments)}"}
         ]
 
-        response = await llm(messages, 1.0, {"parent_run_id": str(run.id) if run else None})
-
-        try:
-            response = response[response.index("["):response.rindex("]") + 1]
-
-            parsed = json.loads(response)
-        except json.JSONDecodeError as e:
-            run = get_current_run_tree()
-            if run:
-                run.metadata["raw_llm_response"] = response
-                run.patch()
-            raise
-
+        last_exc = None
+        for attempt in range(MAX_RETRIES):
+            response = await llm(messages, 1.0, {"parent_run_id": str(run.id) if run else None})
+            try:
+                response = response[response.index("["):response.rindex("]") + 1]
+                parsed = json.loads(response)
+                break
+            except (json.JSONDecodeError, ValueError) as e:
+                last_exc = e
+                logger.warning("pattern_detection parse failed (attempt %d/%d): %s", attempt + 1, MAX_RETRIES, e)
+                if attempt == MAX_RETRIES - 1:
+                    run = get_current_run_tree()
+                    if run:
+                        run.metadata["raw_llm_response"] = response
+                        run.patch()
+                    raise last_exc
+        
         for f in parsed:
             if isinstance(f.get("reasoning"), str):
                 f["reasoning"] = [f["reasoning"]]

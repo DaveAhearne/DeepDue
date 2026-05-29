@@ -1,0 +1,78 @@
+{% macro severity_class(s) %}{% if s >= 0.7 %}high{% elif s >= 0.4 %}medium{% else %}low{% endif %}{% endmacro %}
+
+<div id="flags-panel" class="flags-panel visible">
+    <div class="flags-header">
+        <span class="flags-title">
+            Flagged entities{% if flags %}<span>{{ flags | length }}</span>{% endif %}
+        </span>
+        <button id="btn-investigate" class="btn-investigate">Investigate selected</button>
+    </div>
+    <div class="flags-grid">
+        {% if flags %}
+            {% for flag in flags %}
+            {% set sc = severity_class(flag.severity) %}
+            <div class="flag-card" data-entities="{{ flag.entity_ids | join(',') }}">
+                <div class="flag-card-main">
+                    <div class="flag-card-top">
+                        <span class="flag-pattern {{ sc }}">{{ flag.pattern_type | replace('_', ' ') | replace('-', ' ') }}</span>
+                    </div>
+                    <div class="flag-entities">
+                        {% for eid in flag.entity_ids %}
+                        <span class="entity-chip">{{ eid }}</span>
+                        {% endfor %}
+                    </div>
+                    <ul class="flag-reasoning">
+                        {% for reason in flag.reasoning %}
+                        <li>{{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="flag-card-side">
+                    <div class="flag-checkbox">
+                        <svg class="flag-checkbox-tick" viewBox="0 0 10 10" fill="none">
+                            <path d="M1.5 5L4 7.5L8.5 2.5" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="flag-severity">
+                        severity
+                        <div class="severity-bar">
+                            <div class="severity-fill {{ sc }}" style="width: {{ (flag.severity * 100) | round | int }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-flags">no flags raised</div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="stats-row" class="stats-row visible" hx-swap-oob="true">
+    <div class="stat-cell">
+        <div class="stat-label">Entities traversed</div>
+        <div class="stat-value">{{ entities_visited | length }}</div>
+        <div class="stat-sub">companies &amp; officers</div>
+    </div>
+    <div class="stat-cell">
+        <div class="stat-label">Flags raised</div>
+        <div class="stat-value">{{ flags | length }}</div>
+        <div class="stat-sub">patterns matched</div>
+    </div>
+    <div class="stat-cell">
+        <div class="stat-label">Depth reached</div>
+        <div class="stat-value">{{ depth }}</div>
+        <div class="stat-sub">traversal levels</div>
+    </div>
+    <div class="stat-cell">
+        <div class="stat-label">Duration</div>
+        <div class="stat-value">{{ elapsed }}s</div>
+        <div class="stat-sub">seconds elapsed</div>
+    </div>
+</div>
+
+<div id="log-header" class="log-header" hx-swap-oob="true">
+    <div class="status-dot done"></div>
+    <span class="log-label">Complete — {{ company_number }}</span>
+    <span class="log-meta" id="log-meta">{{ elapsed }}s</span>
+</div>

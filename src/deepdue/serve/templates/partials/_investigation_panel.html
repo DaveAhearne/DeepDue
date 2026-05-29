@@ -1,0 +1,27 @@
+<div hx-ext="sse" sse-connect="/investigation/stream?company_number={{ company_number }}" sse-close="done">
+
+    <div class="log-panel">
+        <div id="log-header" class="log-header">
+            <div class="status-dot running"></div>
+            <span class="log-label">Investigating — {{ company_number }}</span>
+            <span class="log-meta" id="log-meta"></span>
+        </div>
+        <div id="log-body" class="log-body"
+             sse-swap="status"
+             hx-swap="beforeend scroll:#log-body:bottom">
+        </div>
+    </div>
+
+    <div id="stats-row" class="stats-row"></div>
+
+    <div id="flags-panel" class="flags-panel"
+         sse-swap="result"
+         hx-swap="outerHTML">
+    </div>
+
+    <div id="error-container"
+         sse-swap="error"
+         hx-swap="innerHTML">
+    </div>
+
+</div>
