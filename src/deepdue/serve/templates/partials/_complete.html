@@ -1,0 +1,5 @@
+<div id="log-header" class="log-header">
+    <div class="status-dot {% if error %}error{% else %}done{% endif %}"></div>
+    <span class="log-label">{% if error %}Error{% else %}Complete{% endif %} — {{ company_number }}</span>
+    <span class="log-meta" id="log-meta">{{ elapsed }}s</span>
+</div>

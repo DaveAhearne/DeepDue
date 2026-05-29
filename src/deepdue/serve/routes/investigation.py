@@ -22,10 +22,11 @@ NODE_LABELS = {
     "get_officer_appointments": "officer_appointments",
     "enqueue_officer": "enqueue_officer",
     "pattern_detection": "pattern_detection",
+    "report_summary": "report_summary",
 }
 
 
-def _get_message(node: str, input_state: dict) -> str:
+def _get_message(node: str, input_state) -> str:
     if hasattr(input_state, "model_dump"):
         input_state = input_state.model_dump()
     if not isinstance(input_state, dict):
@@ -36,7 +37,6 @@ def _get_message(node: str, input_state: dict) -> str:
     to_investigate = input_state.get("entities_to_investigate") or []
     visited = input_state.get("entities_visited") or []
 
-    # Strip /officers/ prefix for display
     short_id = entity_id.split("/")[-1] if entity_id else ""
 
     visited_ids = set()
@@ -58,6 +58,7 @@ def _get_message(node: str, input_state: dict) -> str:
         "get_officer_appointments": f"fetching appointments → {short_id}",
         "enqueue_officer": f"{remaining} entities queued for traversal",
         "pattern_detection": f"analysing {len(to_investigate)} collected entities",
+        "report_summary": "generating investigation summary",
     }.get(node, "started")
 
 
@@ -90,8 +91,6 @@ async def investigation_stream(request: Request, company_number: str):
 
                 if kind == "on_chain_start" and node not in _SKIP_NODES:
                     logger.debug("SSE node: %r", node)
-
-                if kind == "on_chain_start" and node not in _SKIP_NODES:
                     input_state = event.get("data", {}).get("input") or {}
                     elapsed = round(time.time() - start_time, 1)
                     html = templates.env.get_template("partials/_log_line.html").render(
@@ -112,12 +111,41 @@ async def investigation_stream(request: Request, company_number: str):
                         company_number=company_number,
                     )
                     yield {"event": "result", "data": html}
+
+                    if not output.get("report"):
+                        elapsed = round(time.time() - start_time, 1)
+                        complete_html = templates.env.get_template("partials/_complete.html").render(
+                            company_number=company_number,
+                            elapsed=elapsed,
+                        )
+                        yield {"event": "complete", "data": complete_html}
+                        yield {"event": "done", "data": ""}
+
+                elif kind == "on_chain_end" and node == "report_summary":
+                    output = event["data"].get("output", {})
+                    elapsed = round(time.time() - start_time, 1)
+                    html = templates.env.get_template("partials/_report.html").render(
+                        report=output.get("report", ""),
+                    )
+                    yield {"event": "report", "data": html}
+
+                    complete_html = templates.env.get_template("partials/_complete.html").render(
+                        company_number=company_number,
+                        elapsed=elapsed,
+                    )
+                    yield {"event": "complete", "data": complete_html}
                     yield {"event": "done", "data": ""}
 
         except Exception as e:
             logger.exception("SSE investigation error")
             html = templates.env.get_template("partials/_error.html").render(message=str(e))
             yield {"event": "error", "data": html}
+            error_html = templates.env.get_template("partials/_complete.html").render(
+                company_number=company_number,
+                elapsed=round(time.time() - start_time, 1),
+                error=True,
+            )
+            yield {"event": "complete", "data": error_html}
             yield {"event": "done", "data": ""}
 
     return EventSourceResponse(event_generator())

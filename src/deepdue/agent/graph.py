@@ -1,7 +1,7 @@
 import os
 from langgraph.graph import StateGraph, START, END
 from deepdue.agent.state import InputState, InvestigationState
-from deepdue.agent.nodes import enqueue_company_details, enqueue_officer_details, init, route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, should_continue, officer_appointment_extraction, pattern_detection
+from deepdue.agent.nodes import enqueue_company_details, enqueue_officer_details, init, route_lookup_by_type ,company_lookup, dequeue_next, officer_extraction, psc_extraction, filing_history, should_continue, officer_appointment_extraction, pattern_detection, report
 from deepdue.data.companies_house import CompaniesHouseClient
 from deepdue.llm import LLMClients, make_llm_clients
 from dotenv import load_dotenv
@@ -24,6 +24,7 @@ def build_graph(ch_client: CompaniesHouseClient, llm_clients: LLMClients):
     officer_appointment_extraction_node = officer_appointment_extraction.make_officer_appointment_extraction_node(ch_client)
 
     pattern_detection_node = pattern_detection.make_pattern_detection_node(llm_clients["reasoning"])
+    report_node = report.make_report_summary_node(llm_clients["synthesis"])
 
     should_continue_node = should_continue.node
     enqueue_officer_node = enqueue_officer_details.node
@@ -80,6 +81,9 @@ def build_graph(ch_client: CompaniesHouseClient, llm_clients: LLMClients):
     builder.add_edge("dequeue_next", "route_extraction_by_type")
 
     builder.add_node("pattern_detection", pattern_detection_node)
-    builder.add_edge("pattern_detection", END)
+    builder.add_edge("pattern_detection", "report_summary")
     
+    builder.add_node("report_summary", report_node)
+    builder.add_edge("report_summary", END)
+
     return builder.compile()

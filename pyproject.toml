@@ -13,7 +13,8 @@ dependencies = [
     "pydantic-settings",
     "litellm",
     "langsmith",
-    "qdrant-client"
+    "qdrant-client",
+    "markdown"
 ]
 
 [project.optional-dependencies]

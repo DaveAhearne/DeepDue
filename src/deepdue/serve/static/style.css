@@ -270,6 +270,53 @@ input[type="text"]::placeholder { color: var(--text-tertiary); }
     font-size: 11px;
 }
 
+.report-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.report-header {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.report-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.report-body {
+    padding: 1.25rem 1.5rem;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+}
+
+.report-body h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 1.25rem 0 0.5rem;
+}
+
+.report-body h2:first-child { margin-top: 0; }
+
+.report-body p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+}
+
+.report-body strong { color: var(--text-primary); font-weight: 500; }
+
 @keyframes fadein { to { opacity: 1; } }
 
 .log-line-prefix { color: var(--accent); flex-shrink: 0; }
