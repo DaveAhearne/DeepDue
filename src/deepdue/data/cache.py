@@ -7,7 +7,10 @@ class QdrantCHCache:
     def __init__(self, qdrant_host: str, qdrant_port: str, cache_ttl_seconds: int) -> dict | None:
         self.cache_ttl_seconds = cache_ttl_seconds
         self.client = QdrantClient(url=qdrant_host, port=qdrant_port)
-        self._initialize_collections()
+        try:
+            self._initialize_collections()
+        except:
+            raise RuntimeError("Failed to connect to QDrant")
 
     def _collection_name(self, entity_type: CacheEntityType) -> str: 
         return f"ch_{entity_type.value}"

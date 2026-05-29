@@ -1,7 +1,10 @@
 from langgraph.graph import END
 from deepdue.agent.state import InvestigationState
 
-def node(state: InvestigationState):
+def node(state: InvestigationState) -> dict:
+    return {}
+
+def route(state: InvestigationState):
     visited_ids = {e.id for e in state["entities_visited"]}
 
     remaining = [
@@ -12,4 +15,4 @@ def node(state: InvestigationState):
     if remaining:
         return "dequeue_next"
     
-    return "end"
+    return "pattern_detection"

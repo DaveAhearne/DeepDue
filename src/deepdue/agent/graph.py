@@ -11,7 +11,7 @@ def create_graph():
     load_dotenv()
     
     llm_clients = make_llm_clients()
-    client = CompaniesHouseClient(os.environ["CH_API_KEY"])
+    client = CompaniesHouseClient(os.environ["CH_API_KEY"], llm_clients)
     
     return build_graph(client, llm_clients)
 
@@ -58,26 +58,28 @@ def build_graph(ch_client: CompaniesHouseClient, llm_clients: LLMClients):
     builder.add_edge("pscs_extraction", "enqueue_company")
 
     builder.add_node("enqueue_company", enqueue_company_node)
-    builder.add_edge("enqueue_company", "pattern_detection")
+    builder.add_edge("enqueue_company", "should_continue")
 
     builder.add_node("get_officer_appointments", officer_appointment_extraction_node)
     builder.add_edge("get_officer_appointments", "enqueue_officer")
 
     builder.add_node("enqueue_officer", enqueue_officer_node)
-    builder.add_edge("enqueue_officer", "pattern_detection")
-    
-    builder.add_node("pattern_detection", pattern_detection_node)
+    builder.add_edge("enqueue_officer", "should_continue")
+
+    builder.add_node("should_continue", should_continue_node)
     builder.add_conditional_edges(
-            "pattern_detection", 
-            should_continue_node,
+            "should_continue", 
+            should_continue.route,
             {
                 "dequeue_next":"dequeue_next",
-                "end": END
+                "pattern_detection": "pattern_detection"
             }
         )
-    
 
     builder.add_node("dequeue_next", dequeue_next.node)
     builder.add_edge("dequeue_next", "route_extraction_by_type")
+
+    builder.add_node("pattern_detection", pattern_detection_node)
+    builder.add_edge("pattern_detection", END)
     
     return builder.compile()
